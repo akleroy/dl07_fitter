@@ -1,4 +1,4 @@
-function find_best_draine_mw_model $
+function find_best_draine_model $
 ;    X, Y, ERROR
    , bands=data_bands $
    , data=data_vec_in $
