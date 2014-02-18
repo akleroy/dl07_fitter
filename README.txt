@@ -13,6 +13,7 @@ EXAMPLE USE:
 
 (1) Download
 (2) Run "prep_models"
+(3) Use "find_best_draine_model" to fit your data
 
 Note that you may (probably do, in fact) want to modify prep_models to
 turn off the /nospec option. Having this on only computes the model
@@ -46,3 +47,9 @@ SUPPORT PROGRAMS:
   "new_draine_model".
 
 - new_draine_model : makes an empty structure to contain a DL07 model.
+
+TO DO:
+
+- the fitter needs the most work
+
+- a monte carlo tool to kick back realistic error estimates
