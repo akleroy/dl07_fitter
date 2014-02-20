@@ -29,23 +29,45 @@ function find_best_draine_model $
 ;
 ; CALLING SEQUENCE:
 ;
-;
+; fit = find_best_draine_model(bands=bands, data=data, error=error)
 ;
 ; INPUTS:
 ;
+; bands : a vector of strings identifying the bands (e.g., "pacs_70")
 ;
+; data : intensity in units of MJy/sr
+;
+; error : uncertainty in units of MJy/sr
 ;
 ; OPTIONAL INPUTS:
 ;
+; gal : string specifying the type of dust ("MW","LMC","SMC")
 ;
+; You can pass in a model cube and grid to avoid the cost of reloading:
+;
+; umin_vec, gamma_vec, qpah_vec : vectors defining the model cube axes
+;
+; model_cube : the cube of models
 ;
 ; KEYWORD PARAMETERS:
 ;
+; load_models : a switch to request that models be reloaded from disk
+; (will happend automatically if none are passed in).
 ;
+; submm : flag indicating the inclusion of sub-millimeter data, which
+; will allow the minimum radiation field to go below 0.7.
+;
+; add_error: add 10% error, close to the Draine & Li 2007
+; recommendation
+;
+; quiet: suppress output
 ;
 ; OUTPUTS:
 ;
-;
+; A structure containing the fit results. QPAH is a %, DUST_SD is
+; g/cm2, UMIN is in units of the local radiation field, GAMMA is a
+; fraction. Also includes the data, results of the fit, goodness of
+; fit parameter, and tolerance used to compute the uncertainty.
 ;
 ; OPTIONAL OUTPUTS:
 ;
