@@ -69,6 +69,10 @@ function find_best_draine_model $
 ; fraction. Also includes the data, results of the fit, goodness of
 ; fit parameter, and tolerance used to compute the uncertainty.
 ;
+; Note that Draine et al. 2014 renormalize these models. The net
+; effect is that the dust surface densities should be scaled by 0.816;
+; this is not included in this calculation.
+;
 ; OPTIONAL OUTPUTS:
 ;
 ;
@@ -304,12 +308,16 @@ function find_best_draine_model $
 ; DUST SURFACE DENSITIES
   mh = 1.6735340e-24            ; HYDROGEN MASS
 
+; The model units are (Jy/sr)/(H/cm^2). The factor "scale" has been
+; fit to scale the model to the input units of MJy/sr. We multiply
+; this by 1e6 to account for the difference between Jy and MJy. Then
+; "scale" should be the H column. Multiply this by mh to convert to
+; grams and then by mdust-per-mh to convert to dust mass column.
+
   dust_sd_cube =  $
-     1e-23 * scale_cube * 1e6 $  ; FLUX PER STER IN ERG/S/CM^-2/HZ
-     * 4. * !pi $                ; FLUX -> LUMINOSITY
-     / (1e-23*4.*!pi) $          ; POWER PER H
-     * mh $                      ; MASS OF HYDROGEN
-     * (model_cube.mdust_per_mh) ; DUST/H IN THE MODEL
+     scale_cube * 1e6 $         ; FLUX PER JY/STER 
+     * mh $                     ; MASS OF HYDROGEN
+     * (model_cube.mdust_per_mh)  ; DUST/H IN THE MODEL
   
 ; NOW WORK OUT MEAN (LOG) VALUES OVER THE "WITHIN TOLERANCE" SPACE
   exp_qpah = $
