@@ -115,7 +115,11 @@ function find_best_draine_model $
      
      if keyword_set(quiet) eq 0 then $
         message, 'Reloading MW data from disk.', /info
-     restore, '$MY_IDL/draine/'+model_file
+
+     if n_elements(model_dir) eq 0 then begin
+        model_dir = '$MY_IDL/dl07_fitter/'
+     endif
+     restore, model_dir+model_file
 
 ; IF WE LACK SUBMM DATA, EXCISE MODELS WITH MINIMUM RADIATION FIELDS
 ; BELOW 0.7 FROM THE GRID
@@ -156,7 +160,7 @@ function find_best_draine_model $
           best: nan $
           , min: nan $
           , max: nan $
-          , mean: ann $
+          , mean: nan $
           }
 
 ; ... STRUCTURE HOLDS WHOLE FIT
@@ -206,15 +210,17 @@ function find_best_draine_model $
   if n_elements(error_vec_in) ne n_elements(data_vec) then begin
      message, 'Bad or missing error vector. Using 10% value as weight.', /info
      error_vec = data_vec*0.1
-  endif 
+  endif else begin
+     error_vec = error_vec_in  
+  endelse
 
 ; ADD 10% IN QUADRATURE TO THE UNCERTAINTY ... CLOSE, BUT NOT
 ; EXACTLY, THE DRAINE APPROACH (+10% OF MODEL)
   if keyword_set(add_error) then begin
      if keyword_set(quiet) eq 0 then $
         message, 'Adding 10% to uncertainties in quadrature.', /info
-     error_vec = sqrt(error_vec_in^2 + (0.1*data_vec)^2)
-  endelse
+     error_vec = sqrt(error_vec^2 + (0.1*data_vec)^2)
+  endif
 
 ; %&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&%&
 ; FIND THE BEST-FIT SCALING GOODNESS OF FIT FOR EACH MODEL
@@ -225,7 +231,7 @@ function find_best_draine_model $
 ; for this is not clear.
 
 ; DEFINE DEGREES OF FREEDOM
-  dof = 3
+  dof = 0
 
 ; LOOP OVER ALL MODELS
   for i = 0, n_umin-1 do begin
@@ -263,8 +269,8 @@ function find_best_draine_model $
   best_gof = min(gof_cube, best_ind)
 
 ; DEFINE TOLERANCE FOR ERROR DEFINITION
-  if n_elements(tol) then $
-     tol = 1.0
+  if n_elements(tol) eq 0 then $
+     tol = 0.1*best_gof
 
 ; THE SURFACE OF INTEREST FOR DEFINING ERRORS
   within_tol = where(gof_cube le (gof_cube+tol), tol_ct)
