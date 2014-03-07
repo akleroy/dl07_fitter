@@ -296,10 +296,10 @@ function find_best_draine_model $
 
 ; DEFINE TOLERANCE FOR ERROR DEFINITION
   if n_elements(tol) eq 0 then $
-     tol = 0.1*best_gof
+     tol = 0.5*best_gof
 
 ; THE SURFACE OF INTEREST FOR DEFINING ERRORS
-  within_tol = where(gof_cube le (gof_cube+tol), tol_ct)
+  within_tol = where(gof_cube le (best_gof+tol), tol_ct)
 
 ; THE BEST-FIT VALUES
   best_scale = scale_cube[best_ind]
