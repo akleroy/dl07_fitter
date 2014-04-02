@@ -9,6 +9,7 @@ function find_best_draine_model $
    , load_models = load_models $
    , gal = gal $
    , gof_cube = gof_cube $
+   , type_gof = type_gof $
    , add_error = add_error $
    , submm = submm $
    , quiet = quiet
@@ -112,6 +113,10 @@ function find_best_draine_model $
 
 ; COPY INPUT VECTOR
   data_vec = data_vec_in  
+
+  if n_elements(type_gof) eq 0 then begin
+     type_gof = 'CHISQ'         ; alternative 'RED_CHISQ'
+  endfor
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ; LOAD MODEL DATA
@@ -257,7 +262,8 @@ function find_best_draine_model $
 ; for this is not clear.
 
 ; DEFINE DEGREES OF FREEDOM
-  dof = 0
+  if n_elements(dof) eq 0 then $
+     dof = 0
 
 ; LOOP OVER ALL MODELS
   for i = 0, n_umin-1 do begin
@@ -281,7 +287,15 @@ function find_best_draine_model $
 ;          ... SAVE THE RESULTS
            scale_cube[i,j,k] = result
            gamma_cube[i,j,k] = gamma_vec[k]
-           gof_cube[i,j,k] = chisq / (n_elements(model_vec) - 1 - dof)
+
+           if type_gof eq 'CHISQ' then $
+              gof_cube[i,j,k] = chisq $
+           else if type_gof eq 'RED_CHISQ' then $
+              gof_cube[i,j,k] = chisq / (n_elements(model_vec) - 1 - dof) $
+           else begin
+              print, "Invalid goodness of fit."
+              stop
+           endelse
 
         endfor
      endfor
@@ -295,8 +309,17 @@ function find_best_draine_model $
   best_gof = min(gof_cube, best_ind)
 
 ; DEFINE TOLERANCE FOR ERROR DEFINITION
-  if n_elements(tol) eq 0 then $
-     tol = 0.5*best_gof
+  if n_elements(tol) eq 0 then begin
+     if gof_type eq 'RED_CHISQ' then $
+        tol = 0.1*best_gof $
+     if gof_type eq 'CHISQ' then begin
+        if dof le 1 then $
+           tol = 1.
+        if dof eq 2 then $
+           tol = 2.3
+        if dof eq 3 then $
+           tol = 3.5
+  endelse
 
 ; THE SURFACE OF INTEREST FOR DEFINING ERRORS
   within_tol = where(gof_cube le (best_gof+tol), tol_ct)

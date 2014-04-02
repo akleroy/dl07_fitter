@@ -203,7 +203,7 @@ function read_one_model $
 ; %$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$%$
 
   readcol, filename $
-    , skip=11 $
+    , skipline=11 $
     , band_microns $
     , power_erg_s_hatom $
     , intens_jy_ster_hatom $
@@ -416,7 +416,7 @@ function read_one_model $
 
   if foundit then begin
       readcol, filename $
-        , skip=counter $
+        , skipline=counter $
         , lam_microns $
         , power_erg_s_hatom $
         , intens_jy_ster_hatom $
