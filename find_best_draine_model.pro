@@ -310,9 +310,9 @@ function find_best_draine_model $
 
 ; DEFINE TOLERANCE FOR ERROR DEFINITION
   if n_elements(tol) eq 0 then begin
-     if gof_type eq 'RED_CHISQ' then $
+     if type_gof eq 'RED_CHISQ' then $
         tol = 0.1*best_gof
-     if gof_type eq 'CHISQ' then begin
+     if type_gof eq 'CHISQ' then begin
         if dof le 1 then $
            tol = 1.
         if dof eq 2 then $
