@@ -116,7 +116,7 @@ function find_best_draine_model $
 
   if n_elements(type_gof) eq 0 then begin
      type_gof = 'CHISQ'         ; alternative 'RED_CHISQ'
-  endfor
+  endif
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ; LOAD MODEL DATA
@@ -311,7 +311,7 @@ function find_best_draine_model $
 ; DEFINE TOLERANCE FOR ERROR DEFINITION
   if n_elements(tol) eq 0 then begin
      if gof_type eq 'RED_CHISQ' then $
-        tol = 0.1*best_gof $
+        tol = 0.1*best_gof
      if gof_type eq 'CHISQ' then begin
         if dof le 1 then $
            tol = 1.
@@ -319,7 +319,8 @@ function find_best_draine_model $
            tol = 2.3
         if dof eq 3 then $
            tol = 3.5
-  endelse
+     endif
+  endif
 
 ; THE SURFACE OF INTEREST FOR DEFINING ERRORS
   within_tol = where(gof_cube le (best_gof+tol), tol_ct)
